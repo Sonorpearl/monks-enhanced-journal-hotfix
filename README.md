@@ -7,6 +7,79 @@ This is an enhanced version of the journal.  It allows for multiple types of jou
 ## Installation
 Simply use the install module screen within the FoundryVTT setup
 
+### Private Foundry 14.369 hotfix (14.01.369.1)
+
+This private build is based on upstream 14.01 (`9d66fb9` on `main`). Foundry
+14.369 stopped registering sheets for unknown document subtypes
+([core change](https://github.com/foundryvtt/foundryvtt/issues/14798)).
+MEJ uses short page types such as `person` even when a page was originally
+namespaced. Core rebuilds the sheet registry before replaying queued
+registrations, dropping those short types. Opening a page then fails in
+`DocumentSheetConfig.getSheetClassesForSubType` with
+`TypeError: Cannot convert undefined or null to object`.
+
+The repair follows [upstream PR #833](https://github.com/ironmonk108/monks-enhanced-journal/pull/833):
+at the start of MEJ's ready handler, restore only missing short-type sheet
+registrations using Foundry's sheet registration API. Existing registrations,
+namespaced types, permissions, and journal data are not changed by this repair.
+No world migration is added. It does not copy/alias entire namespaced registries
+over existing short-type registries or suppress rendering errors.
+
+No compiler, dependency installation, or server-side Node packages are needed.
+The JavaScript, templates, styles, assets, and compendiums are already deployable.
+
+#### Deploy on a self-hosted server
+
+1. Back up your Foundry user-data directory (especially `Data/worlds`) and the
+   existing `Data/modules/monks-enhanced-journal` folder. Keep backups outside
+   `Data/modules`; a backup left inside it can be detected as a duplicate module.
+2. Stop Foundry completely. Extract the supplied ZIP on your own computer.
+3. Transfer the extracted `monks-enhanced-journal` folder with SFTP or your
+   server's file manager into Foundry's user-data `Data/modules` directory,
+   replacing the old module folder rather than nesting it. The final manifest
+   must be `Data/modules/monks-enhanced-journal/module.json`.
+   Do not replace or remove anything in `Data/worlds`.
+4. Start Foundry, check that the installed module version is `14.01.369.1`,
+   and keep Monk's Enhanced Journal enabled in your world.
+5. Hard-refresh every connected browser (Ctrl+F5 or Cmd+Shift+R).
+
+This build deliberately omits the upstream manifest/download update URLs so a
+normal module update cannot silently replace the private repair. When an official
+fix is available, stop Foundry and replace this folder with the official module
+(or reinstall the official module from Setup), then hard-refresh clients again.
+
+#### Verify before using your live campaign
+
+Use a backed-up copy of your world first. With F12 open, check old and newly
+created Person, Place, Quest, Shop, and ordinary Text/Image entries, plus any
+other MEJ types you use. The page body and tabs should appear, not a blank
+rectangle. Edit and reopen a disposable test entry, check images, relationships,
+list variants, and compendium entries, then test a player's view to confirm
+private notes/secrets remain private. The `Object.values` / `BaseSheet` exception
+above should be gone. Startup warnings about unknown short types may
+still appear because the original init-time registrations are unchanged; the
+repair runs afterwards.
+
+Local regression checks model the reported 14.368/14.369 registration lifecycle
+and exercise MEJ's actual registration and type-selection methods for all 13
+types. They are not a real Foundry/browser rendering or permission test; that
+final check requires your Foundry installation.
+
+To roll back, stop Foundry, replace only this module folder with your backed-up
+official folder, restart, and hard-refresh clients. This repair itself makes no
+persisted journal changes, but normal editing and existing module migrations
+still can; restore your world backup if you need to undo those.
+
+#### Recheck or package this checkout
+
+With an existing Node.js installation, run `node --test tests\sheet-registration.test.cjs`.
+After committing local changes, a ZIP containing the committed checkout can be
+created in PowerShell without installing anything:
+
+```powershell
+git archive --format=zip --prefix=monks-enhanced-journal/ --output=monks-enhanced-journal-14.01.369.1.zip HEAD
+```
+
 ## Usage & Current Features
 
 ![monks-enhanced-journal](/screenshots/main.png)

@@ -2256,6 +2256,32 @@ export class MonksEnhancedJournal {
 		CONFIG.JournalEntryPage.typeLabels = foundry.utils.mergeObject((CONFIG.JournalEntryPage.typeLabels || {}), labels);
 	}
 
+	static repairSheetClasses() {
+		let types = MonksEnhancedJournal.getDocumentTypes();
+		let labels = MonksEnhancedJournal.getTypeLabels();
+		let sheetClasses = CONFIG.JournalEntryPage.sheetClasses;
+
+		// 14.369 drops unknown short types when replaying init registrations.
+		// Restore them after core rebuilds sheetClasses, without changing existing sheets.
+		for (let [k, v] of Object.entries(labels)) {
+			if (sheetClasses[k] != undefined)
+				continue;
+			sheetClasses[k] = {};
+			foundry.applications.apps.DocumentSheetConfig.registerSheet(JournalEntryPage, "monks-enhanced-journal", types[k] || foundry.appv1.sheets.JournalPageSheet, {
+				types: [k],
+				makeDefault: true,
+				label: i18n(v)
+			});
+			if (k == "journalentry") {
+				foundry.applications.apps.DocumentSheetConfig.registerSheet(JournalEntryPage, "monks-enhanced-journal", TextImageEntrySheet, {
+					types: ["journalentry"],
+					makeDefault: false,
+					label: "Text and Image"
+				});
+			}
+		}
+	}
+
 	static showAsChatBubble(object, journal, pageId) {
 		if (!journal || !journal.pages || journal.pages.size == 0)
 			return;
@@ -2598,6 +2624,8 @@ export class MonksEnhancedJournal {
 	}
 
 	static async ready() {
+		MonksEnhancedJournal.repairSheetClasses();
+
 		game.socket.on(MonksEnhancedJournal.SOCKET, MonksEnhancedJournal.onMessage);
 
 		APSJ.init();
