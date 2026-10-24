@@ -199,6 +199,8 @@
     }
   },
   "url": "https://github.com/ironmonk108/monks-enhanced-journal",
+  "manifest": "https://github.com/Sonorpearl/monks-enhanced-journal-hotfix/releases/download/14.01.369.1/module.json",
+  "download": "https://github.com/Sonorpearl/monks-enhanced-journal-hotfix/releases/download/14.01.369.1/monks-enhanced-journal-14.01.369.1.zip",
   "bugs": "https://github.com/ironmonk108/monks-enhanced-journal/issues",
   "id": "monks-enhanced-journal",
   "compatibility": {

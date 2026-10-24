@@ -7,9 +7,10 @@ This is an enhanced version of the journal.  It allows for multiple types of jou
 ## Installation
 Simply use the install module screen within the FoundryVTT setup
 
-### Private Foundry 14.369 hotfix (14.01.369.1)
+### Unofficial Foundry 14.369 hotfix (14.01.369.1)
 
-This private build is based on upstream 14.01 (`9d66fb9` on `main`). Foundry
+This personal-use build is published publicly for manifest installation, is not
+an official release, and is based on upstream 14.01 (`9d66fb9` on `main`). Foundry
 14.369 stopped registering sheets for unknown document subtypes
 ([core change](https://github.com/foundryvtt/foundryvtt/issues/14798)).
 MEJ uses short page types such as `person` even when a page was originally
@@ -28,6 +29,27 @@ over existing short-type registries or suppress rendering errors.
 No compiler, dependency installation, or server-side Node packages are needed.
 The JavaScript, templates, styles, assets, and compendiums are already deployable.
 
+#### Install through a manifest URL
+
+Back up your world and existing module first. Have players log out and use
+Return to Setup; keep Foundry running so its installer is available.
+In Setup, open Add-on Modules, click Install Module, and paste this into
+Manifest URL:
+
+```text
+https://github.com/Sonorpearl/monks-enhanced-journal-hotfix/releases/download/14.01.369.1/module.json
+```
+
+Click Install. This uses the existing module ID, not a second module. If Foundry
+refuses because the module is already installed, uninstall only Monk's Enhanced
+Journal from Setup's Add-on Modules tab, then install using the URL above.
+Do not delete your world. Uninstalling removes the module's files, including
+its bundled compendiums, so back those up first if you edited them.
+
+Check for version `14.01.369.1`, launch the world, confirm the module is enabled,
+and hard-refresh all connected browsers. Internet access to GitHub release
+downloads is required on the Foundry server.
+
 #### Deploy on a self-hosted server
 
 1. Back up your Foundry user-data directory (especially `Data/worlds`) and the
@@ -43,10 +65,10 @@ The JavaScript, templates, styles, assets, and compendiums are already deployabl
    and keep Monk's Enhanced Journal enabled in your world.
 5. Hard-refresh every connected browser (Ctrl+F5 or Cmd+Shift+R).
 
-This build deliberately omits the upstream manifest/download update URLs so a
-normal module update cannot silently replace the private repair. When an official
-fix is available, stop Foundry and replace this folder with the official module
-(or reinstall the official module from Setup), then hard-refresh clients again.
+This build pins its manifest and ZIP URLs to this specific unofficial release;
+normal update checks will not switch back to the author's releases. When an
+official fix is available, reinstall the official module from Setup (or stop
+Foundry and replace the module folder), then hard-refresh clients again.
 
 #### Verify before using your live campaign
 

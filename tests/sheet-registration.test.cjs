@@ -13,6 +13,14 @@ const sheetNames = [
     "LootSheet", "SlideshowSheet", "TextImageEntrySheet"
 ];
 
+test("manifest pins both public release assets without changing the module ID", () => {
+    const manifest = JSON.parse(readFileSync(path.join(__dirname, "..", "module.json"), "utf8"));
+    const base = `https://github.com/Sonorpearl/monks-enhanced-journal-hotfix/releases/download/${manifest.version}`;
+    assert.equal(manifest.id, "monks-enhanced-journal");
+    assert.equal(manifest.manifest, `${base}/module.json`);
+    assert.equal(manifest.download, `${base}/monks-enhanced-journal-${manifest.version}.zip`);
+});
+
 // Model the reported core lifecycle, not a substitute for running Foundry itself.
 function setup({ strict = true } = {}) {
     const pending = [];
